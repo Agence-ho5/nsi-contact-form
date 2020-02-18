@@ -1,0 +1,23 @@
+{
+    "name": "agence-ho5/nsi-contact-form",
+    "description": "Add a simple contact form to wordpress",
+    "type": "wordpress-plugin",
+    "authors": [
+        {
+            "name": "Fabien LEGE",
+            "email": "fabien.lege@ho5group.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.nsi-dev.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "agence-ho5/wp-classes": "*",
+        "htmlburger/carbon-fields": "*",
+        "agence-ho5/carbon-field-uuid": "*"
+    }
+}
