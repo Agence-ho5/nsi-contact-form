@@ -45,6 +45,9 @@ class ContactFormPostType extends Hookable {
     add_filter( 'carbon_fields_register_fields', [get_called_class(), 'fieldsSetup'], 2 );
     add_action( 'wp_ajax_' . Plugin::PLUGIN_NAME . '_post', [get_called_class(), 'postForm'] );
     add_action( 'wp_ajax_nopriv_' . Plugin::PLUGIN_NAME . '_post', [get_called_class(), 'postForm'] );
+    add_filter( 'manage_' . static::POST_TYPE . '_posts_columns', [get_called_class(), 'postTypeColumns'] );
+
+    add_action( 'manage_' . static::POST_TYPE . '_posts_custom_column', [get_called_class(), 'postTypeCustomColumns'], 10, 2 );
   }
 
   /**
@@ -327,5 +330,38 @@ class ContactFormPostType extends Hookable {
     exit;
   }
 
+  /**
+   * Déclare les colones supplémentaires pour ce type de post
+   */
+  public static function postTypeColumns( $columns ) {
+    $date = $columns['date'];
+    unset( $columns['date'] );
+    $columns['shortcode'] = __( 'Shortcode', 'agenceho5' );
+    $columns['date']      = $date;
+
+    return $columns;
+  }
+
+  /**
+   * Affiche les colones personnalisées pour ce type de post
+   */
+  public static function postTypeCustomColumns( $column, $post_id ) {
+    switch ( $column ) {
+    case 'shortcode':
+      echo '<input type="text" readonly id="' . static::POST_TYPE . '_shortcode_' . $post_id . '" value=\'[' . Plugin::PLUGIN_NAME . ' id="' . $post_id . '"]\'><a href="#" onclick="(function(event){document.getElementById(\'' . static::POST_TYPE . '_shortcode_' . $post_id . '\').select();document.execCommand(\'copy\'); event.target.outerHTML = \'' . __( "Copié !", 'agenceho5' ) . '\'; return false;})(event); return false;" title="' . __( "Copier", 'agenceho5' ) . '"><i class="dashicons dashicons-admin-page"></i></a>';
+    }
+  }
+
+  /**
+   * Return all available Contact Form posts
+   */
+  public static function getFormsPosts() {
+    $posts  = get_posts( ['post_type' => ContactFormPostType::POST_TYPE, 'posts_per_page' => -1] );
+    $return = [0 => __( "Sélectionnez...", 'agenceho5' )];
+    foreach ( $posts as $post ) {
+      $return[$post->ID] = $post->post_title;
+    }
+    return $return;
+  }
 }
 ContactFormPostType::getInstance();

@@ -25,6 +25,14 @@ class Plugin extends Hookable {
    */
   protected static function hooks() {
     add_action( 'after_setup_theme', function () {\Carbon_Fields\Carbon_Fields::boot();} );
+    register_activation_hook( __FILE__, [get_called_class(), 'onActivation'] );
+  }
+
+  /**
+   * Opérations à réaliser lors de l'activation du plugin
+   */
+  public static function onActivation() {
+    do_action( static::PLUGIN_NAME . '_activation' );
   }
 }
 Plugin::getInstance();
